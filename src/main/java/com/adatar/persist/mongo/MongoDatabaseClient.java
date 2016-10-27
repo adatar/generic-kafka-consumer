@@ -1,7 +1,8 @@
 package com.adatar.persist.mongo;
 
-import com.mongodb.client.MongoDatabase;
+import com.adatar.util.ConsumerPropertiesLoader;
 import com.adatar.util.GlobalConstants;
+import com.mongodb.client.MongoDatabase;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,12 +20,10 @@ public class MongoDatabaseClient {
 
     @PostConstruct
     public void init(){
-        String dataBase = "";
+        String dataBase = ConsumerPropertiesLoader.getProperty(GlobalConstants.MONGO_DATABASE);;
 
         try{
-
             mongoDatabase = mongoConnection.getClient().getDatabase(dataBase);
-
         } catch (Exception e){
             LOGGER.error("The specified database does not exist: " + dataBase);
             System.exit(1);

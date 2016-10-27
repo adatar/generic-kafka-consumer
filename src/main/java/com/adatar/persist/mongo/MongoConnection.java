@@ -1,5 +1,6 @@
 package com.adatar.persist.mongo;
 
+import com.adatar.util.ConsumerPropertiesLoader;
 import com.adatar.util.GlobalConstants;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -20,8 +21,8 @@ public class MongoConnection {
     @PostConstruct
     public void init(){
 
-        String host = "";
-        int port = NumberUtils.toInt("", 27017);
+        String host = ConsumerPropertiesLoader.getProperty(GlobalConstants.MONGO_HOST);
+        int port = NumberUtils.toInt(ConsumerPropertiesLoader.getProperty(GlobalConstants.MONGO_PORT), 27017);
 
         try{
             mongoClient = new MongoClient(Arrays.asList(new ServerAddress(host, port)));

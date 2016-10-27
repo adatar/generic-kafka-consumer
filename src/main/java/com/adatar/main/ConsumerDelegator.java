@@ -4,7 +4,7 @@ import com.adatar.util.GlobalConstants;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.adatar.twitter.TweetsAnalysisHandler;
+import com.adatar.consumer.twitter.TweetsAnalysisHandler;
 
 /**
  * This is a program handler which starts the correct consumer handler based on the provided 'topic'. To define another consumer,
@@ -12,9 +12,9 @@ import com.adatar.twitter.TweetsAnalysisHandler;
  */
 
 @Component
-public class ConsumerHandler {
+public class ConsumerDelegator {
 
-    private static Logger LOGGER = Logger.getLogger(ConsumerHandler.class.getName());
+    private static Logger LOGGER = Logger.getLogger(ConsumerDelegator.class.getName());
 
     @Autowired
     private TweetsAnalysisHandler tweetsAnalysisHandler;

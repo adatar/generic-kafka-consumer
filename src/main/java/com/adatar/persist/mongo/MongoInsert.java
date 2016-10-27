@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a prototype class which inserts data to a specific collection defined in the constructor.
@@ -37,7 +39,17 @@ public class MongoInsert {
             LOGGER.error("The specified collection does not exist: " + collectionName);
             System.exit(1);
         }
+    }
 
+    public void persist(List<String> messages){
+        List<Document> documentList = new ArrayList<>();
+
+        for(String message : messages){
+            Document document = Document.parse(message);
+            documentList.add(document);
+        }
+
+        mongoCollection.insertMany(documentList);
     }
 
     public void persist(String jsonString){

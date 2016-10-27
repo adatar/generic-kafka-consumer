@@ -1,9 +1,11 @@
-package com.adatar.twitter;
+package com.adatar.consumer.twitter;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import com.adatar.persist.mongo.MongoInsert;
+import com.adatar.util.ConsumerPropertiesLoader;
+import com.adatar.util.GlobalConstants;
 import com.adatar.util.KafkaProps;
 import com.adatar.util.SpringContext;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -29,18 +31,18 @@ public class TweetsAnalysisHandler {
     public void init(){
         this.kafkaProperties = KafkaProps.create();
 
-        int threadPoolSize = NumberUtils.toInt("", 10);
+        int threadPoolSize = NumberUtils.toInt(ConsumerPropertiesLoader.getProperty(GlobalConstants.TWEETS_ANALYSIS_CONSUMER_THREADS), 10);
         this.executor = Executors.newFixedThreadPool(threadPoolSize);
     }
 
     public void start(String topic){
-        MongoInsert mongoInsert = (MongoInsert) SpringContext.getApplicationContext().getBean("mongoInsert", "");
+        MongoInsert mongoInsert = (MongoInsert) SpringContext.getApplicationContext()
+                .getBean("mongoInsert", ConsumerPropertiesLoader.getProperty(GlobalConstants.TWEETS_COLLECTION));
 
-        int kafkaPartitions = NumberUtils.toInt("", 1);
-        LOGGER.info("Number of Kafka Partitions = " + kafkaPartitions);
+        int consumerThreads = NumberUtils.toInt(ConsumerPropertiesLoader.getProperty(GlobalConstants.TWEETS_ANALYSIS_CONSUMER_THREADS), 10);
 
-        for (int i = 0; i < kafkaPartitions; i++) {
-            TweetsAnalysisConsumer consumer = (TweetsAnalysisConsumer) SpringContext.getApplicationContext().getBean("indexFailConsumer",Arrays.asList(topic), kafkaProperties, mongoInsert);
+        for (int i = 0; i < consumerThreads; i++) {
+            TweetsAnalysisConsumer consumer = (TweetsAnalysisConsumer) SpringContext.getApplicationContext().getBean("indexFailConsumer", Arrays.asList(topic), kafkaProperties, mongoInsert, i);
             executor.execute(consumer);
 
             LOGGER.info("Started Consumer # " + i);
